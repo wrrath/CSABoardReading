@@ -113,9 +113,7 @@ def fileOperator(readFile: str):
     #         print()
     
     
-def combineFile(front):
-    
-
+def combineFile(front) -> None:
     files:List[str] = {f"{front}1.txt", f"{front}2.txt", f"{front}3.txt", f"{front}4.txt", f"{front}5.txt" }
     with open(f"{front}All.txt", '+a') as newFile:
         for file in files:
