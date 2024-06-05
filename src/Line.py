@@ -1,0 +1,42 @@
+import copy
+from typing import List
+class Line:
+    def __init__(self, values:list) -> None:
+        self.values = values
+        
+    def printValues(self) -> None:
+        print(*self.values, sep = ", ")
+        
+    def cleanValues(self) -> None:
+        cleanValues:list = []
+        for value in self.values:
+            value = int(value)
+            if (value >= 240):
+                value = 0
+            cleanValues.append(value)
+        self.values = cleanValues
+        
+        
+class Packet:
+    def __init__(self, lines: List[Line]) -> None:
+        self.lines = lines
+        
+    def copy(self) -> 'Packet':
+        return copy.copy(self)
+    
+    def printPacket(self) -> None:
+        for line in self.lines:
+            line.printValues()
+            
+    def addLine(self, line) -> None:
+        self.lines.append(line)
+        
+    def clear(self) -> None:
+        self.lines = []
+        
+    def packetValues(self) -> List[int]:
+        tempList: List[int] = []
+        for line in self.lines:
+            for value in line.values:
+                tempList.append(value)
+        return tempList
