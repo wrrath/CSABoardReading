@@ -4,16 +4,20 @@ from src.PacketProcessor import PacketProcessor
 from typing import List
 
 def cleanData(fileNameOrig: str, fileNameCleaned: str):
-    n = open(fileNameCleaned, "w")
-    with open(fileNameOrig, "r") as f:
-        for line in f:
-            line = line.rstrip('\r\n')
-            if (line == ''):
-                print()
-            else:
-                n.write(line + '\r')
-    f.close()
-    n.close()
+    with open(fileNameCleaned, "w") as n:
+        with open(fileNameOrig, "r") as f:
+            for line in f:
+                line = line.rstrip('\r\n')
+                if (line == ''):
+                    continue
+                else:
+                    n.write(line + '\r')
+def lineToPacket(fileNameOrig: str, packetFile: str):
+    with open(fileNameOrig) as f:
+        with open(packetFile) as p:
+            for line in f:
+                
+    return
 def checkForAnyValues(totalData):
     indexList: List[List[dict]] = []
     for count, packet in enumerate(totalData):
@@ -129,23 +133,28 @@ def combineFile(front) -> None:
                 
 # cleanData("CapturedData/row1Column1Data/column1Row1Data5.txt", "CapturedData/row1Column1Data/column1Row1Data5DataCleaned.txt")
 # fileOperator("CapturedData/row1Column1Data/column1Row1Data1DataCleaned.txt")
+def findAvg():
+    front: str = "CapturedData/row1Column1Data/R1C1D"
 
-front: str = "CapturedData/row1Column1Data/R1C1D"
-
-totalData: List[Line] = []
-with open(f"{front}All.txt", 'r') as newFile:
-    for line in newFile:
-        list = line.rsplit()
-        lineObj = Line(list)
-        totalData.append(lineObj)
-avg: List[int] = [0] * 128
-for line in totalData:
-    list = line.values
-    for count, value in enumerate(list):
-        avg[count] = avg[count] + int(value)
-        if (int(value) > 1):
-            # print(value, end=',')
-            continue
-    print()
-avg = [x//1808 for x in avg]
-print(avg)
+    totalData: List[Line] = []
+    with open(f"{front}All.txt", 'r') as newFile:
+        for line in newFile:
+            list = line.rsplit()
+            lineObj = Line(list)
+            totalData.append(lineObj)
+    avg: List[int] = [0] * 128
+    for line in totalData:
+        list = line.values
+        for count, value in enumerate(list):
+            avg[count] = avg[count] + int(value)
+            if (int(value) > 1):
+                # print(value, end=',')
+                continue
+        print()
+    avg = [x//1808 for x in avg]
+    print(avg)
+    
+for x in range(1,9):
+    for y in range(1,9):    
+        lineToPacket(f"CapturedData/SearchData/Cleaned/Row{x}/R{x}C{y}.txt", f"CapturedData/SearchData/Packet/Row{x}/R{x}C{y}.txt")
+        print(f"{x}:{y}")
