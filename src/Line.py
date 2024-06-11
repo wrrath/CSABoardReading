@@ -15,7 +15,8 @@ class Line:
                 value = 0
             cleanValues.append(value)
         self.values = cleanValues
-        
+    def clear(self):
+        self.values = []
         
 class Packet:
     def __init__(self, lines: List[Line]) -> None:
