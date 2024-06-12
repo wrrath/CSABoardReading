@@ -1,8 +1,8 @@
 import copy
 from typing import List
 class Line:
-    def __init__(self, values:list) -> None:
-        self.values = values
+    def __init__(self, values:List[int]) -> None:
+        self.values: List[int] = values
         
     def printValues(self) -> None:
         print(*self.values, sep = ", ")
@@ -15,8 +15,15 @@ class Line:
                 value = 0
             cleanValues.append(value)
         self.values = cleanValues
-    def clear(self):
+
+    def clear(self) -> None:
         self.values = []
+
+    def dataLine(self) -> bool:
+        for value in self.values:
+            if (int(value) < 240 and int(value) > 4):
+                return True
+        return False
         
 class Packet:
     def __init__(self, lines: List[Line]) -> None:
