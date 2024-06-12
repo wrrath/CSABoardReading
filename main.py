@@ -1,6 +1,7 @@
 from src.Line import Line, Packet
 from src.BoardDisplay import BoardDisplay, Square
 from src.PacketProcessor import PacketProcessor
+from src.indexGetter import indexGetter
 from typing import List
 
 def cleanData(fileNameOrig: str, fileNameCleaned: str):
@@ -12,6 +13,17 @@ def cleanData(fileNameOrig: str, fileNameCleaned: str):
                     continue
                 else:
                     n.write(line + '\r')
+
+def condensedDataToFile(orginalFile: str, newFile: str) -> None:
+    with open(orginalFile, "r") as orgFile:
+        with open(newFile, "w") as nFile:
+            for line in orgFile:
+                tempLine: Line = Line(line.rsplit())
+                print(tempLine.dataLine())
+                if(tempLine.dataLine()):
+                    tempLine.cleanValues()
+                    nFile.write('\t'.join(str(x) for x in tempLine.values) + '\r')
+
 def lineToPacket(fileNameOrig: str, packetFile: str):
     with open(packetFile, "w") as p:
         with open(fileNameOrig, "r") as f:
@@ -86,21 +98,14 @@ def findAvg(fileName: str, avgCutOff: int) -> None:
             print(f"Index: {count}, Value: {x}")
     
 def main():
-    lineToPacket("CapturedData/SearchData/Cleaned/Row1/R1C2.txt", "CapturedData/SearchData/Packet/Row1/R1C2.txt")
     for x in range(1,9):
         for y in range(1,9):    
             print(f"{x}:{y}")
-            findAvg(f"CapturedData/SearchData/Packet/Row{x}/R{x}C{y}.txt", 6)
             print()
-    print("============================")
 main()
 
-
-with open("CapturedData/SearchData/original/RandomPoints/r7c2.txt", "r") as orgFile:
-    with open("CapturedData/SearchData/dataLine/RandomPoints/r7c2.txt", "w") as newFile:
-        for line in orgFile:
-            tempLine: Line = Line(line.rsplit())
-            print(tempLine.dataLine())
-            if(tempLine.dataLine()):
-                tempLine.cleanValues()
-                newFile.write(line)
+with open("CapturedData/SearchData/dataLine/Row5/R5C1.txt", "r") as file:
+    for line in file:
+        tempLine: Line = Line(line.rsplit())
+        i: indexGetter = indexGetter(tempLine)
+        i.determineRow()
