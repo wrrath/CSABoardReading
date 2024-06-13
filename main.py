@@ -96,16 +96,21 @@ def findAvg(fileName: str, avgCutOff: int) -> None:
             continue
         else:
             print(f"Index: {count}, Value: {x}")
-    
+            
+def printRowCol(file:str) ->None:
+    with open(file, "r") as file:
+        for line in file:
+            tempLine: Line = Line(line.rsplit())
+            i: indexGetter = indexGetter(tempLine)
+            rowVal: int = i.determineRow()
+            colVal: int = i.determineColumn()
+            print(f"Row: {rowVal}\tColumn: {colVal}")
 def main():
     for x in range(1,9):
         for y in range(1,9):    
-            print(f"{x}:{y}")
-            print()
+            return
 main()
 
-with open("CapturedData/SearchData/dataLine/Row5/R5C1.txt", "r") as file:
-    for line in file:
-        tempLine: Line = Line(line.rsplit())
-        i: indexGetter = indexGetter(tempLine)
-        i.determineRow()
+x: int = 8
+printRowCol(f"CapturedData/ColumnData/dataLine/Column{x}Data.txt")
+    

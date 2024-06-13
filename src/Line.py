@@ -11,7 +11,7 @@ class Line:
         cleanValues:list = []
         for value in self.values:
             value = int(value)
-            if (value >= 240):
+            if (value >= 200):
                 value = 0
             cleanValues.append(value)
         self.values = cleanValues
@@ -21,7 +21,7 @@ class Line:
 
     def dataLine(self) -> bool:
         for value in self.values:
-            if (int(value) < 240 and int(value) > 4 and len(self.values) == 32):
+            if (int(value) < 200 and int(value) > 4 and len(self.values) == 32):
                 return True
         return False
     def maxValue(self) -> dict:
