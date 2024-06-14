@@ -2,7 +2,11 @@ from src.Line import Line, Packet
 from src.BoardDisplay import BoardDisplay, Square
 from src.PacketProcessor import PacketProcessor
 from src.indexGetter import indexGetter
+
 from typing import List
+import numpy as np
+import serial
+
 
 def cleanData(fileNameOrig: str, fileNameCleaned: str):
     with open(fileNameCleaned, "w") as n:
@@ -13,7 +17,13 @@ def cleanData(fileNameOrig: str, fileNameCleaned: str):
                     continue
                 else:
                     n.write(line + '\r')
-
+def stripCommas(fileNameOrig: str, fileNameCleaned: str):
+    with open(fileNameCleaned, "w") as n:
+        with open(fileNameOrig, "r") as f:
+            for line in f:
+                line = line.rstrip('\n')
+                valueList: List[int] = line.split(',')
+                n.write('\t'.join(str(x) for x in valueList) + '\r')
 def condensedDataToFile(orginalFile: str, newFile: str) -> None:
     with open(orginalFile, "r") as orgFile:
         with open(newFile, "w") as nFile:
@@ -111,6 +121,49 @@ def main():
             return
 main()
 
-x: int = 8
-printRowCol(f"CapturedData/ColumnData/dataLine/Column{x}Data.txt")
-    
+
+
+def toSigned16(n):
+    n = n & 0xffff
+    return (n ^ 0x8000) - 0x8000
+
+
+
+stripCommas("CapturedData/WholeCapture.txt", "CapturedData/WholeCaptureCleaned.txt")
+
+wholeBoardFile: str = "CapturedData/WholeBoardTestCleaned.txt"
+otherFile: str = "CapturedData/Cleanedcapture3.txt"
+otherOtherFile: str = "CapturedData/SearchData/Cleaned/Row5/R5C7.txt"
+newFile: str = "CapturedData/WholeCaptureCleaned.txt"
+with open(newFile, "r") as file:
+    outer_count = 0
+    count = 0
+    tempPacket = []
+    allPackets = []
+    for line in file:
+        #tempLine: Line = Line(line.rsplit())
+        #tempLine.cleanValues()                          # gets rid of the large values >=220
+        tmp_line = line.rsplit()
+        tmp_line = np.array(tmp_line,dtype=int)
+        for val in tmp_line:
+            tempPacket.append(val)
+        allPackets.append(tempPacket)
+        tempPacket = []
+        outer_count +=1
+        print(outer_count)
+            
+    with open("outputConsole3", "w") as output:
+        for packet in allPackets:
+            index: int = np.argmax(packet)
+            maxValue: int = packet[index]
+            # if(index > 95):
+            #     index-=96
+            # elif (index > 63):
+            #     index-=64
+            # elif (index > 31):
+            #     index-=32
+            
+            
+            output.write(f"{index}\t:\t{maxValue}\r")
+            #print(f"{index}\t:\t{maxValue}:\t{nextValue}:\t{prevValue}")
+
