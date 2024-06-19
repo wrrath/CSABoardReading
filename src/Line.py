@@ -34,26 +34,3 @@ class Line:
         output = {"Index": indexValue, "Value": maxValue}
         return output
         
-class Packet:
-    def __init__(self, lines: List[Line]) -> None:
-        self.lines = lines
-        
-    def copy(self) -> 'Packet':
-        return copy.copy(self)
-    
-    def printPacket(self) -> None:
-        for line in self.lines:
-            line.printValues()
-            
-    def addLine(self, line) -> None:
-        self.lines.append(line)
-        
-    def clear(self) -> None:
-        self.lines = []
-        
-    def packetValues(self) -> List[int]:
-        tempList: List[int] = []
-        for line in self.lines:
-            for value in line.values:
-                tempList.append(value)
-        return tempList
