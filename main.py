@@ -6,7 +6,7 @@ from src.indexGetter import indexGetter
 from typing import List
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
+import matplotlib.animation as animation
 
 def cleanData(fileNameOrig: str, fileNameCleaned: str):
     with open(fileNameCleaned, "w") as n:
@@ -256,7 +256,7 @@ def drawStuff():
         return line,    
 
     # Animation
-    ani = FuncAnimation(fig, update, frames=range(100), blit=True)
+    ani = animation.FuncAnimation(fig, update, frames=range(100), blit=True)
     # ani = FuncAnimation(figure, funciton, frames, init_func, fargs, save_count, cache_frame_data)
     # Show the animation
     plt.show()
@@ -276,5 +276,45 @@ def barcode():
     ax.imshow(code.reshape(1, -1), cmap='binary', aspect='auto',
             interpolation='nearest')
     plt.show()
-    
-barcode()
+
+
+
+
+
+
+
+fig, ax = plt.subplots()
+
+
+def f(x, y):
+    return np.sin(x) + np.cos(y)
+
+x = np.linspace(0, 2 * np.pi, 120)
+y = np.linspace(0, 2 * np.pi, 100).reshape(-1, 1)
+
+# ims is a list of lists, each row is a list of artists to draw in the
+# current frame; here we are just animating one artist, the image, in
+# each frame
+ims = []
+for i in range(60):
+    x += np.pi / 15
+    y += np.pi / 30
+    im = ax.imshow(f(x, y), animated=True)
+    if i == 0:
+        ax.imshow(f(x, y))  # show an initial one first
+    ims.append([im])
+
+ani = animation.ArtistAnimation(fig, ims, interval=50, blit=True,
+                                repeat_delay=1000)
+
+# To save the animation, use e.g.
+#
+# ani.save("movie.mp4")
+#
+# or
+#
+# writer = animation.FFMpegWriter(
+#     fps=15, metadata=dict(artist='Me'), bitrate=1800)
+# ani.save("movie.mp4", writer=writer)
+
+plt.show()
