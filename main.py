@@ -1,5 +1,4 @@
 from typing import List
-from src.Line import Line
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -7,7 +6,6 @@ import matplotlib.animation as animation
 
           
 def toSigned16(n):
-    #return n
     n = n & 0xffff
     return (n ^ 0x8000) - 0x8000
 
@@ -26,27 +24,19 @@ def hexCleaner(fileNameOrig: str, fileNameCleaned: str) -> None:
     with open(fileNameOrig, "r") as old:
         with open(fileNameCleaned, "w") as new:
             lineList = []
-            valueList: List[str] = []
             old = old.read().split("0D0A")
             
             for line in old:
-                # print(f"Line length: {len(line)}")
                 if (len(line) == 256):
-                    try:
-                        newLine = splitToInt16(line,64)
-                        lineList.append(newLine)
-                        #print(newLine)
-                    except:
-                        #print(line)
-                        continue
-            
+                    newLine = splitToInt16(line,64)
+                    lineList.append(newLine)
+                else:
+                    print("Line is too short")
             for line in lineList:
                 new.write('\t'.join(str(x) for x in line) + '\n')
 
 def checkValues(fileName: str): #finds significant value from each line in the file
     with open(fileName, "r") as file:
-        outer_count = 0
-        count = 0
         tempPacket = []
         allPackets = []
         for line in file:
@@ -55,8 +45,7 @@ def checkValues(fileName: str): #finds significant value from each line in the f
             for val in tmp_line:
                 tempPacket.append(val)
             allPackets.append(tempPacket)
-            tempPacket = []
-            outer_count +=1    
+            tempPacket = []   
         with open("outputConsole4.txt", "w") as output:
             for packet in allPackets:
                 index: int = np.argmax(packet)
@@ -64,35 +53,38 @@ def checkValues(fileName: str): #finds significant value from each line in the f
                 
                 output.write(f"{index}\t:\t{maxValue}\r")
                 
-def fileToArray(file: str) -> List[List[int]]:
+def txtFileToArray(file: str) -> List[List[int]]:
     frames = []
     with open(file, "r") as f:
         for line in f:
             frames.append(list(map(int, line.rstrip('\n').split('\t'))))
     return frames
 
+def setIndex(originalArray):
+    # if you are reading idx, read the first value as an inverted xy grid.  
+    # The first value, 19, is the bottom left of the board, 12 is the top right.
+    idx = np.array([19,27,35,43,51,59,3,11,
+                    23,31,39,47,55,63,7,15,
+                    22,30,38,46,54,62,6,14,
+                    18,26,34,42,50,58,2,10,
+                    21,29,37,45,53,61,5,13,
+                    17,25,33,41,49,57,1, 9,
+                    16,24,32,40,48,56,0, 8,
+                    20,28,36,44,52,60,4,12])
+    return originalArray[idx]
 def outputData(file: str):
-    frames = fileToArray(file)
+    frames = txtFileToArray(file)
     frames = np.array(frames)
-    idx = np.array([19,23,22,18,21,17,16,20,
-                    27,31,30,26,29,25,24,28,
-                    35,39,38,34,37,33,32,36,
-                    43,47,46,42,45,41,40,44,
-                    51,55,54,50,53,49,48,52,
-                    59,63,62,58,61,57,56,60,
-                    3, 7, 6, 2, 5, 1, 0, 4,
-                    11,15,14,10,13,9, 8, 12])
-    
     framesOutput = []
     for frame in frames:
-        frame = frame[idx]
+        frame = setIndex(frame)
         framesOutput.append(frame)
     framesOutput = np.array(framesOutput)
 
     np.save("NumpyTestOut", framesOutput)
     
 def displayData(file: str):
-    frames = fileToArray(file)
+    frames = txtFileToArray(file)
     
     frames = np.array(frames,dtype=float)
     frames = frames - np.min(frames)
@@ -100,27 +92,14 @@ def displayData(file: str):
     frames = frames * 255
     frames = np.array(frames,dtype=int)
     
-    
-    idx = np.array([19,23,22,18,21,17,16,20,
-                    27,31,30,26,29,25,24,28,
-                    35,39,38,34,37,33,32,36,
-                    43,47,46,42,45,41,40,44,
-                    51,55,54,50,53,49,48,52,
-                    59,63,62,58,61,57,56,60,
-                    3, 7, 6, 2, 5, 1, 0, 4,
-                    11,15,14,10,13,9, 8, 12])
-  
     rows, cols = 8, 8
     
-
     # Set up the figure and axis
     fig, ax = plt.subplots()
-    cax = ax.imshow(np.zeros((rows, cols)), cmap='viridis', vmin=0, vmax=256)
-
-
+    cax = ax.imshow(np.zeros((rows, cols)), cmap='viridis', vmin=0, vmax=256, origin="lower")
 
     def update(frame):
-        frameDisplay = frames[frame][idx]
+        frameDisplay = setIndex(frames[frame])
         data_2d = np.array(frameDisplay).reshape((rows, cols))
         cax.set_array(data_2d)
         return cax,
@@ -130,8 +109,6 @@ def displayData(file: str):
 
     # Display the animation
     plt.show()
-
-        
 
 
 hexCleaner("CapturedData/testCapture.txt", "CapturedData/testCaptureCleaned.txt")
