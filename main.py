@@ -23,15 +23,15 @@ def splitToInt16(value,length):
 def hexCleaner(fileNameOrig: str, fileNameCleaned: str) -> None:
     with open(fileNameOrig, "r") as old:
         with open(fileNameCleaned, "w") as new:
+            oldStr = old.read()
             lineList = []
-            old = old.read().split("0D0A")
-            
-            for line in old:
+            oldStr = oldStr.split("0D0A")
+            for line in oldStr:
                 if (len(line) == 256):
                     newLine = splitToInt16(line,64)
                     lineList.append(newLine)
                 else:
-                    print("Line is too short")
+                    print(f"Line is out of bounds. Length: {len(line)}")
             for line in lineList:
                 new.write('\t'.join(str(x) for x in line) + '\n')
 
@@ -62,15 +62,15 @@ def txtFileToArray(file: str) -> List[List[int]]:
 
 def setIndex(originalArray):
     # if you are reading idx, read the first value as an inverted xy grid.  
-    # The first value, 19, is the bottom left of the board, 12 is the top right.
-    idx = np.array([19,27,35,43,51,59,3,11,
-                    23,31,39,47,55,63,7,15,
-                    22,30,38,46,54,62,6,14,
-                    18,26,34,42,50,58,2,10,
-                    21,29,37,45,53,61,5,13,
-                    17,25,33,41,49,57,1, 9,
-                    16,24,32,40,48,56,0, 8,
-                    20,28,36,44,52,60,4,12])
+    # The first value, 3, is the bottom left of the board, 60 is the top right.
+    idx = np.array([3,11,19,27,35,43,51,59,
+                    7,15,23,31,39,47,55,63,
+                    6,14,22,30,38,46,54,62,
+                    2,10,18,26,34,42,50,58,
+                    5,13,21,29,37,45,53,61,
+                    1, 9,17,25,33,41,49,57,
+                    0, 8,16,24,32,40,48,56,
+                    4,12,20,28,36,44,52,60])
     return originalArray[idx]
 def outputData(file: str):
     frames = txtFileToArray(file)
@@ -106,9 +106,9 @@ def displayData(file: str):
 
     # Create an animation
     ani = animation.FuncAnimation(fig, update, frames=len(frames), interval=30, blit=True)
-
-    # Display the animation
     plt.show()
+
+
 
 
 hexCleaner("CapturedData/testCapture.txt", "CapturedData/testCaptureCleaned.txt")
