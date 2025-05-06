@@ -81,7 +81,7 @@ def outputData(file: str):
         framesOutput.append(frame)
     framesOutput = np.array(framesOutput)
 
-    np.save("NumpyTestOut", framesOutput)
+    np.save(f"../CapturedData/{filename}.npy", framesOutput)
     
 def displayData(file: str):
     frames = txtFileToArray(file)
@@ -110,7 +110,7 @@ def displayData(file: str):
 
 
 
-
-hexCleaner("CapturedData/testCapture.txt", "CapturedData/testCaptureCleaned.txt")
-outputData("CapturedData/testCaptureCleaned.txt")
-displayData("CapturedData/testCaptureCleaned.txt")
+filename:str = "testCapture"  # Change to whatver filename you have.
+hexCleaner(f"../CapturedData/{filename}.txt", f"../CapturedData/{filename}Cleaned.txt")
+outputData(f"../CapturedData/{filename}Cleaned.txt", filename)
+displayData(f"../CapturedData/{filename}Cleaned.txt")
